@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 
-const API_BASE = 'http://localhost:8080'
+const defaultApiBase = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
 const suggestionPrompts = [
   'Show me all active users',
   'What collections are in this database?',
@@ -10,6 +10,7 @@ const suggestionPrompts = [
 ]
 
 function App() {
+  const [apiBase, setApiBase] = useState(defaultApiBase)
   const [connectionString, setConnectionString] = useState('mongodb://localhost:27017')
   const [databaseName, setDatabaseName] = useState('sample_db')
   const [schemaResult, setSchemaResult] = useState(null)
@@ -27,7 +28,8 @@ function App() {
     setStatus('Connecting to MongoDB...')
 
     try {
-      const response = await fetch(`${API_BASE}/api/mongo/schema-summary`, {
+      const baseUrl = apiBase.replace(/\/$/, '')
+      const response = await fetch(`${baseUrl}/api/mongo/schema-summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ connectionString, databaseName }),
@@ -63,7 +65,8 @@ function App() {
     setStatus('Generating answer...')
 
     try {
-      const response = await fetch(`${API_BASE}/api/query`, {
+      const baseUrl = apiBase.replace(/\/$/, '')
+      const response = await fetch(`${baseUrl}/api/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -110,6 +113,16 @@ function App() {
           </div>
 
           <form onSubmit={handleGenerateSchema} className="connection-form">
+            <label>
+              API base URL
+              <input
+                type="text"
+                value={apiBase}
+                onChange={(event) => setApiBase(event.target.value)}
+                placeholder="http://localhost:8080"
+              />
+            </label>
+
             <label>
               MongoDB URI
               <input
