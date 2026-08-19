@@ -99,6 +99,10 @@ function App() {
         <div>
           <p className="eyebrow">AI Database Copilot</p>
           <h1>DB Assist</h1>
+          <div className="backend-url">
+            <small>Backend:</small>
+            <a href={apiBase} target="_blank" rel="noreferrer">{apiBase}</a>
+          </div>
         </div>
         <div className="status-pill">
           <span className="status-dot" />
